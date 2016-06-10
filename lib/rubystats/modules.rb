@@ -43,7 +43,7 @@ module Rubystats
     @log_beta_cache_q    = 0.0
 
     def log_beta(p,q)
-      if p != @log_beta_cache_p || q != @log_beta_cache_q 
+      if p != @log_beta_cache_p || q != @log_beta_cache_q
         @log_beta_cache_p = p
         @log_beta_cache_q = q
         if (p <= 0.0) || (q <= 0.0) || (p + q) > LOG_GAMMA_X_MAX_VALUE
@@ -84,7 +84,7 @@ module Rubystats
     # </P>
     # Author:: Jaco van Kooten
 
-    def orig_gamma(x) 
+    def orig_gamma(x)
       # Gamma related constants
       g_p = [ -1.71618513886549492533811, 24.7656508055759199108314,
         -379.804256470945635097577, 629.331155312818442661052,
@@ -93,7 +93,7 @@ module Rubystats
       g_q = [-30.8402300119738975254353, 315.350626979604161529144,
         -1015.15636749021914166146, -3107.77167157231109440444,
         22538.1184209801510330112, 4755.84627752788110767815,
-        -134659.959864969306392456, -115132.259675553483497211 ] 
+        -134659.959864969306392456, -115132.259675553483497211 ]
       g_c = [-0.001910444077728, 8.4171387781295e-4, -5.952379913043012e-4,
         7.93650793500350248e-4, -0.002777777777777681622553,
         0.08333333333333333331554247, 0.0057083835261 ]
@@ -102,14 +102,14 @@ module Rubystats
       n = 0
       y = x
       parity = false
-      if y <= 0.0 
+      if y <= 0.0
         # ----------------------------------------------------------------------
         #  Argument is negative
         # ----------------------------------------------------------------------
         y = -(x)
         y1 = y.to_i
         res = y - y1
-        if res != 0.0 
+        if res != 0.0
           if y1 != (((y1*0.5).to_i) * 2.0)
             parity = true
             fact = -M_pi/sin(M_pi * res)
@@ -141,7 +141,7 @@ module Rubystats
           # ----------------------------------------------------------------------
           z = y
           y += 1
-        else 
+        else
           # ----------------------------------------------------------------------
           #  1.0 .LT. argument .LT. 12.0, reduce argument if necessary
           # ----------------------------------------------------------------------
@@ -154,7 +154,7 @@ module Rubystats
         # ----------------------------------------------------------------------
         xnum = 0.0
         xden = 1.0
-        for i in (0...8) 
+        for i in (0...8)
           xnum = (xnum + g_p[i]) * z
           xden = xden * z + g_q[i]
         end
@@ -164,7 +164,7 @@ module Rubystats
           #  Adjust result for case  0.0 .LT. argument .LT. 1.0
           # ----------------------------------------------------------------------
           res /= y1
-        elsif y1 > y 
+        elsif y1 > y
           # ----------------------------------------------------------------------
           #  Adjust result for case  2.0 .LT. argument .LT. 12.0
           # ----------------------------------------------------------------------
@@ -173,14 +173,14 @@ module Rubystats
             y += 1
           end
         end
-      else 
+      else
         # ----------------------------------------------------------------------
         #  Evaluate for argument .GE. 12.0
         # ----------------------------------------------------------------------
         if y <= GAMMA_X_MAX_VALUE
           ysq = y * y
           sum = g_c[6]
-          for i in(0...6) 
+          for i in(0...6)
             sum = sum / ysq + g_c[i]
             sum = sum / y - y + log(SQRT2PI)
             sum += (y - 0.5) * log(y)
@@ -359,14 +359,14 @@ module Rubystats
 
 
     # Incomplete Gamma function.
-    # The computation is based on approximations presented in 
+    # The computation is based on approximations presented in
     # Numerical Recipes, Chapter 6.2 (W.H. Press et al, 1992).
     # @param a require a>=0
     # @param x require x>=0
     # @return 0 if x<0, a<=0 or a>2.55E305 to avoid errors and over/underflow
     # @author Jaco van Kooten
 
-    def incomplete_gamma(a, x) 
+    def incomplete_gamma(a, x)
       if x <= 0.0 || a <= 0.0 || a > LOG_GAMMA_X_MAX_VALUE
         return 0.0
       elsif x < (a + 1.0)
@@ -393,14 +393,14 @@ module Rubystats
     end
 
     # Author:: Jaco van Kooten
-    def gamma_fraction(a, x) 
+    def gamma_fraction(a, x)
       b  = x + 1.0 - a
       c  = 1.0 / XMININ
       d  = 1.0 / b
       h  = d
       del= 0.0
       an = 0.0
-      for i in (1...MAX_ITERATIONS) 
+      for i in (1...MAX_ITERATIONS)
         if (del-1.0).abs > PRECISION
           an = -i * (i - a)
           b += 2.0
@@ -424,10 +424,10 @@ module Rubystats
     #
     # Author:: Jaco van Kooten
 
-    def beta(p, q) 
+    def beta(p, q)
       if p <= 0.0 || q <= 0.0 || (p + q) > LOG_GAMMA_X_MAX_VALUE
         return 0.0
-      else 
+      else
         return Math.exp(log_beta(p, q))
       end
     end
@@ -437,17 +437,17 @@ module Rubystats
     # Author:: Jaco van Kooten
     # Author:: Paul Meagher
     #
-    #  The computation is based on formulas from Numerical Recipes, 
+    #  The computation is based on formulas from Numerical Recipes,
     #  Chapter 6.4 (W.H. Press et al, 1992).
 
-    def incomplete_beta(x, p, q) 
+    def incomplete_beta(x, p, q)
       if x <= 0.0
         return 0.0
       elsif x >= 1.0
         return 1.0
       elsif (p <= 0.0) || (q <= 0.0) || (p + q) > LOG_GAMMA_X_MAX_VALUE
         return 0.0
-      else 
+      else
         beta_gam = Math.exp( -log_beta(p, q) + p * Math.log(x) + q * Math.log(1.0 - x) )
         if x < (p + 1.0) / (p + q + 2.0)
           return beta_gam * beta_fraction(x, p, q) / p
@@ -462,13 +462,13 @@ module Rubystats
     # Based on an idea from Numerical Recipes (W.H. Press et al, 1992).
     # Author:: Jaco van Kooten
 
-    def beta_fraction(x, p, q) 
+    def beta_fraction(x, p, q)
       c = 1.0
       sum_pq  = p + q
       p_plus  = p + 1.0
       p_minus = p - 1.0
       h = 1.0 - sum_pq * x / p_plus
-      if h.abs < XMININ 
+      if h.abs < XMININ
         h = XMININ
       end
       h     = 1.0 / h
@@ -476,7 +476,7 @@ module Rubystats
       m     = 1
       delta = 0.0
 
-      while (m <= MAX_ITERATIONS) && ((delta - 1.0).abs > PRECISION) 
+      while (m <= MAX_ITERATIONS) && ((delta - 1.0).abs > PRECISION)
         m2 = 2 * m
         # even index for d
         d = m * (q - m) * x / ( (p_minus + m2) * (p + m2))
@@ -563,14 +563,14 @@ module Rubystats
     #            where
     #             P1(s) = degree 6 poly in s
     #             Q1(s) = degree 6 poly in s
-    #     
+    #
     #           3. For x in [1.25,1/0.35(~2.857143)],
     #                  erfc(x) = (1/x)*exp(-x*x-0.5625+R1/S1)
     #                  erf(x)  = 1 - erfc(x)
     #            where
     #             R1(z) = degree 7 poly in z, (z=1/x^2)
     #             S1(z) = degree 8 poly in z
-    #     
+    #
     #           4. For x in [1/0.35,28]
     #                  erfc(x) = (1/x)*exp(-x*x-0.5625+R2/S2) if x > 0
     #                 = 2.0 - (1/x)*exp(-x*x-0.5625+R2/S2) if -6<x<0
@@ -580,7 +580,7 @@ module Rubystats
     #            where
     #             R2(z) = degree 6 poly in z, (z=1/x^2)
     #             S2(z) = degree 7 poly in z
-    #     
+    #
     #           Note1:
     #            To compute exp(-x*x-0.5625+R/S), let s be a single
     #            PRECISION number and s := x then
@@ -602,78 +602,78 @@ module Rubystats
     #                             erf(x)  = sign(x) *(1 - tiny)  (raise inexact)
     #                             erfc(x) = tiny*tiny (raise underflow) if x > 0
     #                           = 2 - tiny if x<0
-    #                
+    #
     #            7. Special case:
     #                             erf(0)  = 0, erf(inf)  = 1, erf(-inf) = -1,
     #                             erfc(0) = 1, erfc(inf) = 0, erfc(-inf) = 2,
     #                           erfc/erf(NaN) is NaN
-    #               
+    #
     #               $efx8 = 1.02703333676410069053e00
-    #                
+    #
     #                 Coefficients for approximation to erf on [0,0.84375]
-    #                
+    #
 
     # Error function.
     # Based on C-code for the error function developed at Sun Microsystems.
     # Author:: Jaco van Kooten
 
+    E_EFX = 1.28379167095512586316e-01
+
+    EPP = [ 1.28379167095512558561e-01,
+      -3.25042107247001499370e-01,
+      -2.84817495755985104766e-02,
+      -5.77027029648944159157e-03,
+      -2.37630166566501626084e-05 ]
+
+    EQQ = [ 3.97917223959155352819e-01,
+      6.50222499887672944485e-02,
+      5.08130628187576562776e-03,
+      1.32494738004321644526e-04,
+      -3.96022827877536812320e-06 ]
+
+    # Coefficients for approximation to erf in [0.84375,1.25]
+    EPA = [-2.36211856075265944077e-03,
+      4.14856118683748331666e-01,
+      -3.72207876035701323847e-01,
+      3.18346619901161753674e-01,
+      -1.10894694282396677476e-01,
+      3.54783043256182359371e-02,
+      -2.16637559486879084300e-03 ]
+
+    EQA = [ 1.06420880400844228286e-01,
+      5.40397917702171048937e-01,
+      7.18286544141962662868e-02,
+      1.26171219808761642112e-01,
+      1.36370839120290507362e-02,
+      1.19844998467991074170e-02 ]
+
+    E_ERX = 8.45062911510467529297e-01
+
     def error(x)
-      e_efx = 1.28379167095512586316e-01
-
-      ePp = [ 1.28379167095512558561e-01,
-        -3.25042107247001499370e-01,
-        -2.84817495755985104766e-02,
-        -5.77027029648944159157e-03,
-        -2.37630166566501626084e-05 ]
-
-      eQq = [ 3.97917223959155352819e-01,
-        6.50222499887672944485e-02,
-        5.08130628187576562776e-03,
-        1.32494738004321644526e-04,
-        -3.96022827877536812320e-06 ]
-
-      # Coefficients for approximation to erf in [0.84375,1.25]
-      ePa = [-2.36211856075265944077e-03,
-        4.14856118683748331666e-01,
-        -3.72207876035701323847e-01,
-        3.18346619901161753674e-01,
-        -1.10894694282396677476e-01,
-        3.54783043256182359371e-02,
-        -2.16637559486879084300e-03 ]
-
-      eQa = [ 1.06420880400844228286e-01,
-        5.40397917702171048937e-01,
-        7.18286544141962662868e-02,
-        1.26171219808761642112e-01,
-        1.36370839120290507362e-02,
-        1.19844998467991074170e-02 ]
-
-      e_erx = 8.45062911510467529297e-01
-
       abs_x = (if x >= 0.0 then x else -x end)
       # 0 < |x| < 0.84375
       if abs_x < 0.84375
         #|x| < 2**-28
-        if abs_x < 3.7252902984619141e-9 
-          retval = abs_x + abs_x * e_efx
+        if abs_x < 3.7252902984619141e-9
+          retval = abs_x + abs_x * E_EFX
         else
           s = x * x
-          p = ePp[0] + s * (ePp[1] + s * (ePp[2] + s * (ePp[3] + s * ePp[4])))
+          p = EPP[0] + s * (EPP[1] + s * (EPP[2] + s * (EPP[3] + s * EPP[4])))
 
-          q = 1.0 + s * (eQq[0] + s * (eQq[1] + s *
-                                       ( eQq[2] + s * (eQq[3] + s * eQq[4]))))
+          q = 1.0 + s * (EQQ[0] + s * (EQQ[1] + s *
+                                       ( EQQ[2] + s * (EQQ[3] + s * EQQ[4]))))
           retval = abs_x + abs_x * (p / q)
         end
       elsif abs_x < 1.25
         s = abs_x - 1.0
-        p = ePa[0] + s * (ePa[1] + s * 
-                          (ePa[2] + s * (ePa[3] + s * 
-           (ePa[4] + s * (ePa[5] + s * ePa[6])))))
+        p = EPA[0] + s * (EPA[1] + s *
+                          (EPA[2] + s * (EPA[3] + s *
+           (EPA[4] + s * (EPA[5] + s * EPA[6])))))
 
-        q = 1.0 + s * (eQa[0] + s * 
-                       (eQa[1] + s * (eQa[2] + s * 
-           (eQa[3] + s * (eQa[4] + s * eQa[5])))))
-        retval = e_erx + p / q
+        q = 1.0 + s * (EQA[0] + s *
+                       (EQA[1] + s * (EQA[2] + s *
+           (EQA[3] + s * (EQA[4] + s * EQA[5])))))
+        retval = E_ERX + p / q
 
       elsif abs_x >= 6.0
         retval = 1.0
@@ -686,47 +686,45 @@ module Rubystats
   # Complementary error function.
   # Based on C-code for the error function developed at Sun Microsystems.
   # author Jaco van Kooten
+  ERA = [-9.86494403484714822705e-03,
+    -6.93858572707181764372e-01,
+    -1.05586262253232909814e01,
+    -6.23753324503260060396e01,
+    -1.62396669462573470355e02,
+    -1.84605092906711035994e02,
+    -8.12874355063065934246e01,
+    -9.81432934416914548592e00 ]
 
+  ESA = [ 1.96512716674392571292e01,
+    1.37657754143519042600e02,
+    4.34565877475229228821e02,
+    6.45387271733267880336e02,
+    4.29008140027567833386e02,
+    1.08635005541779435134e02,
+    6.57024977031928170135e00,
+    -6.04244152148580987438e-02 ]
+
+  # Coefficients for approximation to erfc in [1/.35,28]
+
+  ERB = [-9.86494292470009928597e-03,
+    -7.99283237680523006574e-01,
+    -1.77579549177547519889e01,
+    -1.60636384855821916062e02,
+    -6.37566443368389627722e02,
+    -1.02509513161107724954e03,
+    -4.83519191608651397019e02 ]
+
+  ESB = [ 3.03380607434824582924e01,
+    3.25792512996573918826e02,
+    1.53672958608443695994e03,
+    3.19985821950859553908e03,
+    2.55305040643316442583e03,
+    4.74528541206955367215e02,
+    -2.24409524465858183362e01 ]
+    
    def complementary_error(x)
     # Coefficients for approximation of erfc in [1.25,1/.35]
-
-    eRa = [-9.86494403484714822705e-03,
-      -6.93858572707181764372e-01,
-      -1.05586262253232909814e01,
-      -6.23753324503260060396e01,
-      -1.62396669462573470355e02,
-      -1.84605092906711035994e02,
-      -8.12874355063065934246e01,
-      -9.81432934416914548592e00 ]
-
-    eSa = [ 1.96512716674392571292e01,
-      1.37657754143519042600e02,
-      4.34565877475229228821e02,
-      6.45387271733267880336e02,
-      4.29008140027567833386e02,
-      1.08635005541779435134e02,
-      6.57024977031928170135e00,
-      -6.04244152148580987438e-02 ]
-
-    # Coefficients for approximation to erfc in [1/.35,28]
-
-    eRb = [-9.86494292470009928597e-03,
-      -7.99283237680523006574e-01,
-      -1.77579549177547519889e01,
-      -1.60636384855821916062e02,
-      -6.37566443368389627722e02,
-      -1.02509513161107724954e03,
-      -4.83519191608651397019e02 ]
-
-    eSb = [ 3.03380607434824582924e01,
-      3.25792512996573918826e02,
-      1.53672958608443695994e03,
-      3.19985821950859553908e03,
-      2.55305040643316442583e03,
-      4.74528541206955367215e02,
-      -2.24409524465858183362e01 ]
-
-    abs_x = (if x >= 0.0 then x else -x end)
+    abs_x = x.abs
     if abs_x < 1.25
       retval = 1.0 - error(abs_x)
     elsif abs_x > 28.0
@@ -736,27 +734,27 @@ module Rubystats
     else
       s = 1.0/(abs_x * abs_x)
       if abs_x < 2.8571428
-        r = eRa[0] + s * (eRa[1] + s * 
-                          (eRa[2] + s * (eRa[3] + s * (eRa[4] + s * 
-                                                       (eRa[5] + s *(eRa[6] + s * eRa[7])
+        r = ERA[0] + s * (ERA[1] + s *
+                          (ERA[2] + s * (ERA[3] + s * (ERA[4] + s *
+                                                       (ERA[5] + s *(ERA[6] + s * ERA[7])
                                                        )))))
 
-                                                       s = 1.0 + s * (eSa[0] + s * (eSa[1] + s * 
-                                          (eSa[2] + s * (eSa[3] + s * (eSa[4] + s * 
-                           (eSa[5] + s * (eSa[6] + s * eSa[7])))))))
+                                                       s = 1.0 + s * (ESA[0] + s * (ESA[1] + s *
+                                          (ESA[2] + s * (ESA[3] + s * (ESA[4] + s *
+                           (ESA[5] + s * (ESA[6] + s * ESA[7])))))))
 
       else
-        r = eRb[0] + s * (eRb[1] + s * 
-                          (eRb[2] + s * (eRb[3] + s * (eRb[4] + s * 
-             (eRb[5] + s * eRb[6])))))
+        r = ERB[0] + s * (ERB[1] + s *
+                          (ERB[2] + s * (ERB[3] + s * (ERB[4] + s *
+             (ERB[5] + s * ERB[6])))))
 
-        s = 1.0 + s * (eSb[0] + s * 
-                       (eSb[1] + s * (eSb[2] + s * (eSb[3] + s * 
-             (eSb[4] + s * (eSb[5] + s * eSb[6]))))))
+        s = 1.0 + s * (ESB[0] + s *
+                       (ESB[1] + s * (ESB[2] + s * (ESB[3] + s *
+             (ESB[4] + s * (ESB[5] + s * ESB[6]))))))
       end
       retval =  Math.exp(-x * x - 0.5625 + r/s) / abs_x
     end
-    return ( if x >= 0.0 then retval else 2.0 - retval end )
+    return ( x >= 0.0 ? retval : 2.0 - retval )
     end
   end
 end
