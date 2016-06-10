@@ -23,47 +23,35 @@ module Rubystats
       get_mean
     end
 
-    #returns distribution variance
+    # returns distribution variance
     def variance
       get_variance
     end
 
-    #Probability density function
+    # Probability density function
     def pdf(x)
       if x.class == Array
-        pdf_vals = []
-        for i in (0 ... x.length)
-          pdf_vals[i] = get_pdf(x[i])
-        end
-        return pdf_vals
+        x.map { |elem| get_pdf(elem) }
       else
-        return get_pdf(x)
+        get_pdf(x)
       end
     end
 
-    #Cummulative distribution function
+    # Cummulative distribution function
     def cdf(x)
       if x.class == Array
-        cdf_vals = []
-        for i in (0...x.size)
-          cdf_vals[i] = get_cdf(x[i])
-        end
-        return cdf_vals
+        x.map { |elem| get_cdf(elem) }
       else
-        return get_cdf(x)
+        get_cdf(x)
       end
     end
 
-    #Inverse CDF
+    # Inverse CDF
     def icdf(p)
       if p.class == Array
-        inv_vals = []
-        for i in (0..p.length)
-          inv_vals[i] = get_icdf(p[i])
-        end
-        return inv_vals
+        p.map { |elem| get_icdf(elem) }
       else
-        return get_icdf(p)
+        get_icdf(p)
       end
     end
 
