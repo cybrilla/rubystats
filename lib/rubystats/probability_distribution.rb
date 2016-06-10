@@ -1,15 +1,15 @@
 require 'rubystats/modules'
 
 module Rubystats
-  # The ProbabilityDistribution superclass provides an object 
+  # The ProbabilityDistribution superclass provides an object
   # for encapsulating probability distributions.
-  # 
-  # Author: Jaco van Kooten 
-  # Author: Mark Hale 
-  # Author: Paul Meagher 
-  # Author: Jesus Castagnetto 
-  # Author: Bryan Donovan (port from PHPmath to Ruby) 
-  
+  #
+  # Author: Jaco van Kooten
+  # Author: Mark Hale
+  # Author: Paul Meagher
+  # Author: Jesus Castagnetto
+  # Author: Bryan Donovan (port from PHPmath to Ruby)
+
   class ProbabilityDistribution
     include Rubystats::NumericalConstants
     include Rubystats::SpecialMath
@@ -28,8 +28,8 @@ module Rubystats
       get_variance
     end
 
-    #Probability density function 
-    def pdf(x) 
+    #Probability density function
+    def pdf(x)
       if x.class == Array
         pdf_vals = []
         for i in (0 ... x.length)
@@ -67,7 +67,7 @@ module Rubystats
       end
     end
 
-    #Returns random number(s) using subclass's get_rng method 
+    #Returns random number(s) using subclass's get_rng method
     def rng(n=1)
       if n < 1
         return "Number of random numbers to return must be 1 or greater"
@@ -95,55 +95,55 @@ module Rubystats
     end
 
     #private method to be implemented in subclass
-    #returns the probability that a stochastic variable x has the value X, i.e. P(x=X). 
+    #returns the probability that a stochastic variable x has the value X, i.e. P(x=X).
     def get_pdf(x)
     end
 
     #private method to be implemented in subclass
-    #returns the probability that a stochastic variable x is less then X, i.e. P(x&lt;X). 
+    #returns the probability that a stochastic variable x is less then X, i.e. P(x&lt;X).
     def get_cdf(x)
     end
 
     #private method to be implemented in subclass
-    #returns the value X for which P(x&lt;X). 
+    #returns the value X for which P(x&lt;X).
     def get_icdf(p)
     end
 
     #private method to be implemented in subclass
     #Random number generator
-    def get_rng 
+    def get_rng
     end
 
-    
+
     public
 
-    #check that variable is between lo and hi limits. 
+    #check that variable is between lo and hi limits.
     #lo default is 0.0 and hi default is 1.0
     def check_range(x, lo=0.0, hi=1.0)
       raise ArgumentError.new("x cannot be nil") if x.nil?
       if x < lo or x > hi
-        raise ArgumentError.new("x must be less than lo (#{lo}) and greater than hi (#{hi})") 
+        raise ArgumentError.new("x must be less than lo (#{lo}) and greater than hi (#{hi})")
       end
     end
 
     def get_factorial(n)
       if n <= 1
         return 1
-      else 
+      else
         return n * get_factorial(n-1)
       end
     end
 
-    def find_root(prob, guess, x_lo, x_hi) 
-      accuracy = 1.0e-10
-      max_iteration = 150
+    ACCURACY = 1.0e-10
+    MAX_ITERATION = 150
+    def find_root(prob, guess, x_lo, x_hi)
       x 		= guess
       x_new = guess
       error = 0.0
       _pdf 	= 0.0
       dx 		= 1000.0
       i 		= 0
-      while ( dx.abs > accuracy && (i += 1) < max_iteration )
+      while ( dx.abs > ACCURACY && (i += 1) < MAX_ITERATION )
         #Apply Newton-Raphson step
         error = cdf(x) - prob
         if error < 0.0
@@ -156,7 +156,7 @@ module Rubystats
           dx = error / _pdf
           x_new = x -dx
         end
-        # If the NR fails to converge (which for example may be the 
+        # If the NR fails to converge (which for example may be the
         # case if the initial guess is too rough) we apply a bisection
         # step to determine a more narrow interval around the root.
         if  x_new < x_lo || x_new > x_hi || _pdf == 0.0
